@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="ttitle">{{ title }}</div>
+<div id="list">
+
+    {% for post in posts.object_list %}
+        <div class="post">
+            <span class="title">{{ post.title }}</span><br />
+            by {{ post.creator }} | <span class="date">{{ post.created }}</span> <br /><br />
+            {{ post.body }} <br />
+        </div>
+    {% endfor %}
+</div>
+
+{% if threads.object_list and threads.paginator.num_pages > 1 %}
+<div class="pagination">
+    <span class="step-links">
+        {% if threads.has_previous %}
+            <a href= "?page={{ threads.previous_page_number }}">previous &lt;&lt; </a>
+        {% endif %}
+
+        <span class="current">
+            &nbsp;Page {{ threads.number }} of {{ threads.paginator.num_pages }}
+        </span>
+
+        {% if threads.has_next %}
+            <a href="?page={{ threads.next_page_number }}"> &gt;&gt; next</a>
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+<a class="button" href="{% url forum.views.post 'reply' pk %}">Reply</a>
+
+{% endblock %}

@@ -5,23 +5,21 @@
 <div id="list">
 <table border="1" cellpadding="4" width="100%">
     <tr>
-        <td></td>
+        <td>Forum</td>
         <td>Posts</td>
         <td>Last post</td>
-        <td></td>
+   
     </tr>
 
     {% for forum in forums %}
     <tr>
-        <td {% if forloop.last %}class="last"{% endif %}>
+        <td>
         <div class="title"> <a href="{% url forum.views.forum forum.pk %}">{{ forum.title }}</a>
             </div></td>
-        <td {% if forloop.last %}class="last"{% endif %}>{{ forum.num_posts }}</td>
-        <td {% if forloop.last %}class="last"{% endif %}>
+        <td>{{ forum.num_posts }}</td>
+        <td>
             {{ forum.last_post.short|linebreaksbr }}</td>
-        <td {% if forloop.last %}class="last"{% endif %}>
-            <a class="button" href="{% url forum.views.forum forum.pk %}">View</a>
-        </td>
+
     </tr>
 
     {% endfor %}

@@ -5,9 +5,9 @@ from forum.models import Post, Thread
 class PostForm(forms.ModelForm):
 	class Meta:
 		model = Post
-		include = ['body']
+		exclude= ['creator', 'thread']
 
-class ThreadForm(forms.ModelForm):
+class ThreadForm(PostForm):
 	class Meta:
 		model = Thread
-		include = ['title']
+		exclude = ['creator', 'forum']

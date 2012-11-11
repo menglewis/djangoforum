@@ -2,8 +2,10 @@
 
 {% block content %}
 
-<a id="new_topic" class="buttont" href=
-"{% url forum.views.post 'new_thread' pk %}">Start New Topic</a>
+{% if user.is_authenticated %}
+<a id="new_topic" class="button" href=
+"{% url forum.views.new_thread pk %}">Start New Topic</a>
+{% endif %}
 
 <br />
 <br />
@@ -12,22 +14,21 @@
 <table border="1" cellpadding="4" width="100%">
     <tr>
         <td>Topics</td>
-        <td>Replies</td>
+        <td>Posts</td>
         <td>Last post</td>
-        <td></td>
+
     </tr>
 
     {% for thread in threads.object_list %}
     <tr>
-        <td {% if forloop.last %}class="last"{% endif %}>
+        <td>
         <div class="title"> <a href="{% url forum.views.thread thread.pk %}">{{ thread.title }}</a>
             </div></td>
-        <td {% if forloop.last %}class="last"{% endif %}>{{ thread.num_replies }}</td>
-        <td {% if forloop.last %}class="last"{% endif %}>
-            {{ thread.last_post.short|linebreaksbr }}</td>
-        <td {% if forloop.last %}class="last"{% endif %}>
-            <a class="button" href="{% url forum.views.thread thread.pk %}">VIEW</a>
-        </td>
+        <td>{{ thread.num_posts }}</td>
+        <td>
+            {{ thread.last_post.creator }}<br />
+            {{ thread.last_post.created }}</td>
+
     </tr>
 
     {% endfor %}

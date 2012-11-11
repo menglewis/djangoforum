@@ -2,18 +2,26 @@
 
 {% block content %}
 
-<div class="ttitle">{{ title }}</div>
-<div id="list">
+<a class="nav" href="{% url forum.views.forum thread.forum.pk %}">Go to {{ thread.forum.title }}</a>
+<br /><br />
+{{ thread.title }}
+<table class="thread" border="1" width="100%">
+    <tr><td class="poster">
+{{ thread.creator }}<br />
+ {{ thread.created }}</td>
+ <td class="post_body">
+{{ thread.body }}</td>
+ </tr>
 
     {% for post in posts.object_list %}
-        <div class="post">
-            <span class="title">{{ post.title }}</span><br />
-            by {{ post.creator }} | <span class="date">{{ post.created }}</span> <br /><br />
-            {{ post.body }} <br />
-        </div>
+        <tr><td class="poster">
+            {{ post.creator }}<br />
+            {{ post.created }}</td>
+            <td class="post_body">{{ post.body }} </td>
+        
     {% endfor %}
-</div>
 
+</table>
 {% if threads.object_list and threads.paginator.num_pages > 1 %}
 <div class="pagination">
     <span class="step-links">
@@ -32,6 +40,7 @@
 </div>
 {% endif %}
 
-<a class="button" href="{% url forum.views.post 'reply' pk %}">Reply</a>
-
+{% if user.is_authenticated %}
+<a class="button" href="{% url forum.views.reply pk %}">Reply</a>
+{% endif %}
 {% endblock %}

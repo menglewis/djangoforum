@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from string import join
 
 
-
 class Category(models.Model):
 	title = models.CharField(max_length=60)
 	
@@ -37,6 +36,7 @@ class Forum(models.Model):
 
 class Thread(models.Model):
 	title = models.CharField(max_length=60)
+	body = models.TextField()
 	creator = models.ForeignKey(User, blank=True, null=True)
 	created = models.DateTimeField(auto_now_add=True)
 	forum = models.ForeignKey(Forum)
@@ -44,14 +44,22 @@ class Thread(models.Model):
 	def __unicode__(self):
 		return u"%s - %s" % (self.creator, self.title)
 
+	def short(self):
+		return u"%s\n%s" % (self, self.created.strftime('%Y-%m-%d, %I:%M %p'))
+
 	def num_posts(self):
-		return self.post_set.count()
+		# count the body of the thread as one post
+		return self.post_set.count() + 1
 
 	def num_replies(self):
-		return self.post_set.count() - 1
+		return self.post_set.count()
 
 	def last_post(self):
-		return self.post_set.order_by('created')[0]
+		# returns last related Post; if none, returns the thread
+		if self.post_set.count():
+			return self.post_set.order_by('created')[0]
+		else:
+			return self
 
 class Post(models.Model):
 	creator = models.ForeignKey(User, blank=True, null=True)
@@ -60,7 +68,7 @@ class Post(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	
 	def __unicode__(self):
-		return u"%s - %s" % (self.creator, self.thread)
+		return u"%s" % self.thread
 
 	def short(self):
-		return u"%s\n%s" % (self.thread, self.created)
+		return u"%s\n%s" % (self.thread, self.created.strftime('%Y-%m-%d, %I:%M %p'))

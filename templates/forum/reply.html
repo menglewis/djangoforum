@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+Current topic: <a href="{% url forum.views.thread thread.pk %} ">{{ thread.title }}</a>
+<form action="{% url forum.views.reply pk %}" method="POST">{% csrf_token %}
+
+    <table>{{ post_form.as_table }}</table>
+    {{ error|linebreaksbr }}
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

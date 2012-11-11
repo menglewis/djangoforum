@@ -14,11 +14,6 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    
-    url(r'^forum/(\d+)/$', 'forum.views.forum'),
-    url(r'^thread/(\d+)/$', 'forum.views.thread'),
-    url(r'^post/(new_thread|reply)/(\d+)/$', 'forums.views.post'),
-    url(r'^reply/(\d+)/$', 'forums.views.reply'),
-    url(r'^new_thread/(\d+)/$', 'forums.views.new_thread'),
-    url(r'', 'forum.views.main'),
+    url(r'^forum/', include('forum.urls')),
+    url(r'^accounts/', include('registration.backends.default.urls')),
 )

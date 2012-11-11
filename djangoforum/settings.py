@@ -127,7 +127,13 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'forum',
+    'registration',
 )
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+
+ACCOUNT_ACTIVATION_DAYS = 7
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

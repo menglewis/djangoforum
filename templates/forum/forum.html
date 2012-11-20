@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<h2>{{ forum.title }}</h2>
+
 {% if user.is_active %}
 <a id="new_topic" class="button" href=
 "{% url forum.views.new_thread pk %}">Start New Topic</a>

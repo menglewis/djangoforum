@@ -1,24 +1,26 @@
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from djangoforum.settings import MEDIA_ROOT, MEDIA_URL
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
-from forum.models import Post, Thread, Forum, Category
-from forum.forms import PostForm, ThreadForm
 from django.contrib.auth.decorators import login_required
+from forum.models import Post, Thread, Forum
+from forum.forms import PostForm, ThreadForm
 
 def main(request):
-	forums = Forum.objects.all()
-	context = {"forums": forums, "user": request.user}
-	return render_to_response("forum/main.html", context)
+	"View for the main page that lists the forums by specified sort number"
+	forums = Forum.objects.all().order_by('sort_number')
+	context = {'forums': forums, 'user': request.user}
+	return render_to_response('forum/main.html', context)
 
 def add_csrf(request, ** kwargs):
+	"takes request and kwargs and creates a dictionary and handles the csrf token"
 	csrf_update = dict(user=request.user, ** kwargs)
 	csrf_update.update(csrf(request))
 	return csrf_update
 
 def make_paginator(request, items, num_items):
+	"creates a paginator for an object"
 	paginator = Paginator(items, num_items)
 	try:
 		page = int(request.GET.get('page', '1'))
@@ -32,11 +34,18 @@ def make_paginator(request, items, num_items):
 	return items
 
 def forum(request, pk):
-	threads = Thread.objects.filter(forum=pk).order_by('-created')
+	"View that displays the threads in a specific forum"
+	forum = Forum.objects.get(pk=pk)
+	# sort the threads by reverse order of the last post in each thread
+	threads = list(Thread.objects.filter(forum=pk))
+	threads.sort(key=lambda thread: thread.last_post_time())
+	threads.reverse()
+	
 	threads = make_paginator(request, threads, 20)
-	return render_to_response("forum/forum.html", add_csrf(request, threads=threads, pk=pk))
+	return render_to_response('forum/forum.html', add_csrf(request, forum=forum, threads=threads, pk=pk))
 
 def thread(request, pk):
+	"View that displays the posts in a specific thread"
 	posts = Post.objects.filter(thread=pk).order_by('created')
 	posts = make_paginator(request, posts, 20)
 	thread = Thread.objects.get(pk=pk)
@@ -45,17 +54,18 @@ def thread(request, pk):
 
 @login_required
 def reply(request, pk):
+	"View that handles POST request for a reply or renders the form for a reply"
 	error = ''
-	if request.method == "POST":
+	if request.method == 'POST':
 		p = request.POST
 		if p['body_markdown']:
 			thread = Thread.objects.get(pk=pk)
 			post = Post()
 			form = PostForm(p, instance=post)
 			post = form.save(commit=False)
-			post.thread = thread
+			post.thread, post.creator = thread, request.user
+			post.save()
 
-			#post = Post.objects.create(thread=thread, body=p['body'], creator=request.user)
 			return HttpResponseRedirect(reverse('forum.views.thread', args=[pk]) + '?page=last')
 		else:
 			error = 'Please enter a Reply\n'
@@ -67,13 +77,18 @@ def reply(request, pk):
 
 @login_required
 def new_thread(request, pk):
+	"View that handles POST request for a new thread or renders the form for a new thread"
  	error = ''
- 	if request.method == "POST":
+ 	if request.method == 'POST':
  		p = request.POST
  		if p['body_markdown'] and p['title']:
  			forum = Forum.objects.get(pk=pk)
- 			thread = Thread.objects.create(forum=forum, title=p['title'], 
- 				body=p['body'], creator=request.user)
+ 			thread = Thread()
+ 			form = ThreadForm(p, instance=thread)
+ 			thread = form.save(commit=False)
+ 			thread.forum, thread.creator = forum, request.user
+ 			thread.save()
+ 			
  			return HttpResponseRedirect(reverse('forum.views.thread', args=[thread.pk]))
  		else:
  			error = 'Please enter the Title and Body\n'

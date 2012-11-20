@@ -2,18 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 import markdown
 
-class Category(models.Model):
-	title = models.CharField(max_length=60)
-	
-	class Meta:
-		verbose_name_plural = "Categories"
-
-	def __unicode__(self):
-		return self.title
-
 class Forum(models.Model):
 	title = models.CharField(max_length=60)
-	category = models.ForeignKey(Category)
+	sort_number = models.IntegerField()
 	
 	def __unicode__(self):
 		return self.title
@@ -45,10 +36,10 @@ class Thread(models.Model):
 	forum = models.ForeignKey(Forum)
 	
 	def __unicode__(self):
-		return u"%s - %s" % (self.creator, self.title)
+		return u'%s - %s' % (self.creator, self.title)
 
 	def short(self):
-		return u"%s\n%s" % (self, self.created.strftime('%Y-%m-%d, %I:%M %p'))
+		return u'%s\n%s' % (self, self.created.strftime('%Y-%m-%d, %I:%M %p'))
 
 	def num_posts(self):
 		# count the body of the thread as one post
@@ -60,9 +51,15 @@ class Thread(models.Model):
 	def last_post(self):
 		# returns last related Post; if none, returns the thread
 		if self.post_set.count():
-			return self.post_set.order_by('created')[0]
+			return self.post_set.order_by('-created')[0]
 		else:
 			return self
+
+	def last_post_time(self):
+		if self.post_set.count():
+			return self.post_set.order_by('-created')[0].created
+		else:
+			return self.created
 
 	def save(self):
 		self.body = markdown.markdown(self.body_markdown)
@@ -76,10 +73,10 @@ class Post(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	
 	def __unicode__(self):
-		return u"%s" % self.thread
+		return u'%s' % self.thread
 
 	def short(self):
-		return u"%s\n%s" % (self.thread, self.created.strftime('%Y-%m-%d, %I:%M %p'))
+		return u'%s\n%s' % (self.thread, self.created.strftime('%Y-%m-%d, %I:%M %p'))
 	
 	def save(self):
 		self.body = markdown.markdown(self.body_markdown)

@@ -10,14 +10,14 @@
 {{ thread.creator }}<br />
  {{ thread.created }}</td>
  <td class="post_body">
-{{ thread.body }}</td>
+{{ thread.body|safe }}</td>
  </tr>
 
     {% for post in posts.object_list %}
         <tr><td class="poster">
             {{ post.creator }}<br />
             {{ post.created }}</td>
-            <td class="post_body">{{ post.body }} </td>
+            <td class="post_body">{{ post.body|safe }} </td>
         
     {% endfor %}
 

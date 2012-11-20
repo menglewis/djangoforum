@@ -35,7 +35,7 @@
 </table>
 </div>
 
-{% if threads.object_list and threads.paginator.num_pages > 1 %}
+{% if threads.paginator.num_pages > 1 %}
 <div class="pagination">
     <span class="step-links">
         {% if threads.has_previous %}

@@ -97,3 +97,7 @@ a .nav {
 .forum_last_post {
     text-align: left;
 }
+
+.error {
+    color: red;
+}

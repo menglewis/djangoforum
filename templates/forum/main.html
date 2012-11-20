@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<table border="1" cellpadding="4" width="100%">
+    <tr>
+        <td>Forum</td>
+        <td>Topics</td>
+        <td>Posts</td>
+
+   
+    </tr>
+
+    {% for forum in forums %}
+    <tr>
+        <td class="forum">
+         <a href="{% url forum.views.forum forum.pk %}">{{ forum.title }}</a>
+            </td>
+        <td class="forum_posts">{{ forum.num_threads }} Topics<br />
+        {{ forum.num_posts }} Posts</td>
+        <td class="forum_last_post">
+            {{ forum.last_post.short|linebreaksbr }}</td>
+
+    </tr>
+
+    {% endfor %}
+
+
+{% endblock %}

@@ -4,14 +4,14 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from djangoforum.settings import MEDIA_ROOT, MEDIA_URL
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
-from forum.models import *
+from forum.models import Post, Thread, Forum, Category
 from forum.forms import PostForm, ThreadForm
 from django.contrib.auth.decorators import login_required
 
 def main(request):
 	forums = Forum.objects.all()
 	context = {"forums": forums, "user": request.user}
-	return render_to_response("forum/list.html", context)
+	return render_to_response("forum/main.html", context)
 
 def add_csrf(request, ** kwargs):
 	csrf_update = dict(user=request.user, ** kwargs)
@@ -21,8 +21,9 @@ def add_csrf(request, ** kwargs):
 def make_paginator(request, items, num_items):
 	paginator = Paginator(items, num_items)
 	try:
-		page = int(request.GET.get("page", '1'))
-	except ValueError: page = 1
+		page = int(request.GET.get('page', '1'))
+	except ValueError: 
+		page = 1
 
 	try:
 		items=paginator.page(page)
@@ -47,9 +48,14 @@ def reply(request, pk):
 	error = ''
 	if request.method == "POST":
 		p = request.POST
-		if p['body']:
+		if p['body_markdown']:
 			thread = Thread.objects.get(pk=pk)
-			post = Post.objects.create(thread=thread, body=p['body'], creator=request.user)
+			post = Post()
+			form = PostForm(p, instance=post)
+			post = form.save(commit=False)
+			post.thread = thread
+
+			#post = Post.objects.create(thread=thread, body=p['body'], creator=request.user)
 			return HttpResponseRedirect(reverse('forum.views.thread', args=[pk]) + '?page=last')
 		else:
 			error = 'Please enter a Reply\n'
@@ -64,7 +70,7 @@ def new_thread(request, pk):
  	error = ''
  	if request.method == "POST":
  		p = request.POST
- 		if p['body'] and p['title']:
+ 		if p['body_markdown'] and p['title']:
  			forum = Forum.objects.get(pk=pk)
  			thread = Thread.objects.create(forum=forum, title=p['title'], 
  				body=p['body'], creator=request.user)

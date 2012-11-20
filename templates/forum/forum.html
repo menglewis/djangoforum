@@ -35,20 +35,19 @@
 </table>
 </div>
 
-<!-- Next/Prev page links  -->
 {% if threads.object_list and threads.paginator.num_pages > 1 %}
 <div class="pagination">
     <span class="step-links">
         {% if threads.has_previous %}
-            <a href= "?page={{ threads.previous_page_number }}">previous &lt;&lt; </a>
+            <a href= "?page={{ threads.previous_page_number }}">Previous</a>
         {% endif %}
 
         <span class="current">
-            &nbsp;Page {{ threads.number }} of {{ threads.paginator.num_pages }}
+            Page {{ threads.number }} of {{ threads.paginator.num_pages }}
         </span>
 
         {% if threads.has_next %}
-            <a href="?page={{ threads.next_page_number }}"> &gt;&gt; next</a>
+            <a href="?page={{ threads.next_page_number }}">Next</a>
         {% endif %}
     </span>
 </div>

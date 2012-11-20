@@ -1,7 +1,7 @@
 Djangoforum
 ===========
 
-This is a simple forum project. It has the basic features of a blog including the ability for users to make threads and posts. Site administrators can create additional forums by using the Django admin panel and they can set a custom sort order for the display of forums.
+This is a simple forum project. It has the basic features of a forum including the ability for users to make threads and posts. Site administrators can create additional forums by using the Django admin panel and they can set a custom sort order for the display of forums.
 
 ## Requirements:
 

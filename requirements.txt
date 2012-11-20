@@ -1,5 +1,7 @@
 Django==1.4.2
+Markdown==2.2.1
 South==0.7.6
 argparse==1.2.1
+django-markdown==0.1.0
 django-registration==0.8
 wsgiref==0.1.2

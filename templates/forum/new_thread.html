@@ -4,7 +4,8 @@
 
 Current forum: <a href="{% url forum.views.forum forum.pk %} ">{{ forum.title }}</a>
 <form action="{% url forum.views.new_thread pk %}" method="POST">{% csrf_token %}
-	<table>{{ thread_form.as_table }}</table>
+	<table><tr><td>Title:</td><td>{{ thread_form.title }}</td></tr>
+		<tr><td>Body:</td><td>{{ thread_form.body_markdown }} </td></tr></table>
     {{ error|linebreaksbr }}
     <input type="submit" value="Submit">
 </form>

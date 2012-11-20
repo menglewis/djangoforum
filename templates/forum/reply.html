@@ -5,7 +5,7 @@
 Current topic: <a href="{% url forum.views.thread thread.pk %} ">{{ thread.title }}</a>
 <form action="{% url forum.views.reply pk %}" method="POST">{% csrf_token %}
 
-    <table>{{ post_form.as_table }}</table>
+    <table><tr><td>Body:</td><td>{{ post_form.body_markdown }}</td></tr></table>
     {{ error|linebreaksbr }}
     <input type="submit" value="Submit">
 </form>

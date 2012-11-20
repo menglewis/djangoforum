@@ -128,6 +128,8 @@ INSTALLED_APPS = (
     'south',
     'forum',
     'registration',
+    'django.contrib.markup',
+    'django_markdown',
 )
 
 EMAIL_HOST = 'localhost'

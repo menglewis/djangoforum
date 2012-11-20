@@ -2,7 +2,7 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
+{% if user.is_active %}
 <a id="new_topic" class="button" href=
 "{% url forum.views.new_thread pk %}">Start New Topic</a>
 {% endif %}
@@ -14,7 +14,7 @@
 <table border="1" cellpadding="4" width="100%">
     <tr>
         <td>Topics</td>
-        <td>Posts</td>
+        <td>Replies</td>
         <td>Last post</td>
 
     </tr>
@@ -24,7 +24,7 @@
         <td>
         <div class="title"> <a href="{% url forum.views.thread thread.pk %}">{{ thread.title }}</a>
             </div></td>
-        <td>{{ thread.num_posts }}</td>
+        <td>{{ thread.num_replies }}</td>
         <td>
             {{ thread.last_post.creator }}<br />
             {{ thread.last_post.created }}</td>

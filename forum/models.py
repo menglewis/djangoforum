@@ -22,6 +22,9 @@ class Forum(models.Model):
 	def num_posts(self):
 		return sum([thread.num_posts() for thread in self.thread_set.all()])
 
+	def num_threads(self):
+		return self.thread_set.count()
+
 	def last_post(self):
 		if self.thread_set.count():
 			last_post = None
@@ -36,7 +39,8 @@ class Forum(models.Model):
 
 class Thread(models.Model):
 	title = models.CharField(max_length=60)
-	body = models.TextField()
+	body = models.TextField(blank=True, null=True)
+	body_markdown = models.TextField()
 	creator = models.ForeignKey(User, blank=True, null=True)
 	created = models.DateTimeField(auto_now_add=True)
 	forum = models.ForeignKey(Forum)
@@ -61,10 +65,15 @@ class Thread(models.Model):
 		else:
 			return self
 
+	def save(self):
+		self.body = markdown.markdown(self.body_markdown)
+		super(Thread, self).save()
+
 class Post(models.Model):
 	creator = models.ForeignKey(User, blank=True, null=True)
 	thread = models.ForeignKey(Thread)
-	body = models.TextField()
+	body = models.TextField(blank=True, null=True)
+	body_markdown = models.TextField()
 	created = models.DateTimeField(auto_now_add=True)
 	
 	def __unicode__(self):
@@ -72,3 +81,7 @@ class Post(models.Model):
 
 	def short(self):
 		return u"%s\n%s" % (self.thread, self.created.strftime('%Y-%m-%d, %I:%M %p'))
+	
+	def save(self):
+		self.body = markdown.markdown(self.body_markdown)
+		super(Post, self).save()

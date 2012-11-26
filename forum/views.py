@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.paginator import Paginator, InvalidPage
 from django.shortcuts import render_to_response
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
@@ -29,7 +29,7 @@ def make_paginator(request, items, num_items):
 
 	try:
 		items=paginator.page(page)
-	except (InvalidPage, EmptyPage):
+	except InvalidPage:
 		items = paginator.page(paginator.num_pages)
 	return items
 
